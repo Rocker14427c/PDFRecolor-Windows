@@ -1,0 +1,56 @@
+{
+  "name": "pdf-recolor-windows",
+  "version": "1.0.0",
+  "description": "PDF Recolor - One color. One click. Done.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "build": "electron-builder --win portable",
+    "build-dir": "electron-builder --win --dir"
+  },
+  "author": "PDF Recolor",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^3.11.174"
+  },
+  "build": {
+    "appId": "com.pdfrecolor.app",
+    "productName": "PDF Recolor",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "PDFRecolor.exe"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "renderer.js",
+      "styles.css",
+      "assets/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "assets/",
+        "to": "assets/",
+        "filter": ["**/*"]
+      }
+    ]
+  },
+  "keywords": []
+}

@@ -1,0 +1,35 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7C6BF0"/>
+      <stop offset="100%" stop-color="#F06292"/>
+    </linearGradient>
+    <linearGradient id="paintGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7C6BF0"/>
+      <stop offset="50%" stop-color="#4A90E2"/>
+      <stop offset="100%" stop-color="#2ECC71"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="128" height="128" rx="28" fill="url(#bgGradient)"/>
+  
+  <!-- Document shape -->
+  <path d="M32 24h48l16 16v68H32V24z" fill="white" fill-opacity="0.95"/>
+  
+  <!-- Folded corner -->
+  <path d="M80 24v12a4 4 0 0 0 4 4h12l-16-16z" fill="#E0E0E0"/>
+  
+  <!-- Color palette -->
+  <rect x="40" y="48" width="48" height="8" rx="4" fill="url(#paintGradient)"/>
+  
+  <!-- Paint brush -->
+  <path d="M52 68l-8 24 4 4 24-24-12-4-8 0z" fill="#7C6BF0"/>
+  <path d="M48 92l-4 8 8 4 12-12" fill="#F06292"/>
+  <circle cx="64" cy="76" r="6" fill="#4A90E2"/>
+  <circle cx="76" cy="80" r="4" fill="#2ECC71"/>
+  
+  <!-- Small dots -->
+  <circle cx="44" cy="76" r="3" fill="#F39C12"/>
+  <circle cx="88" cy="72" r="3" fill="#E91E63"/>
+</svg>

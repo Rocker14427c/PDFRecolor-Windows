@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Recolor — One Color, One Click</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   MATERIAL 3 DESIGN TOKENS
+   ═══════════════════════════════════════════ */
+:root {
+  --md-ref-typeface: 'Inter', system-ui, sans-serif;
+  --md-sys-shape-corner-xs: 4px;
+  --md-sys-shape-corner-sm: 8px;
+  --md-sys-shape-corner-md: 12px;
+  --md-sys-shape-corner-lg: 16px;
+  --md-sys-shape-corner-xl: 28px;
+  --md-sys-shape-corner-full: 9999px;
+  --md-sys-motion-duration-short: 200ms;
+  --md-sys-motion-duration-medium: 350ms;
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+}
+
+[data-theme="light"] {
+  --md-sys-color-primary: #4758A9;
+  --md-sys-color-on-primary: #FFFFFF;
+  --md-sys-color-primary-container: #DDE1FF;
+  --md-sys-color-on-primary-container: #001257;
+  --md-sys-color-secondary: #5A5D72;
+  --md-sys-color-on-secondary: #FFFFFF;
+  --md-sys-color-secondary-container: #DFE1F9;
+  --md-sys-color-surface: #FBF8FF;
+  --md-sys-color-surface-dim: #DBD8E0;
+  --md-sys-color-surface-container-lowest: #FFFFFF;
+  --md-sys-color-surface-container-low: #F5F2FA;
+  --md-sys-color-surface-container: #EFEDF4;
+  --md-sys-color-surface-container-high: #E9E7EF;
+  --md-sys-color-surface-container-highest: #E4E1E9;
+  --md-sys-color-on-surface: #1B1B22;
+  --md-sys-color-on-surface-variant: #46464F;
+  --md-sys-color-outline: #777680;
+  --md-sys-color-outline-variant: #C7C5D0;
+  --md-sys-color-inverse-surface: #303037;
+  --md-sys-color-inverse-on-surface: #F3F0F8;
+  --md-sys-color-error: #BA1A1A;
+  --md-sys-color-shadow: rgba(0,0,0,0.15);
+  --md-sys-color-scrim: rgba(0,0,0,0.4);
+  --elevation-1: 0 1px 3px 1px var(--md-sys-color-shadow), 0 1px 2px 0 var(--md-sys-color-shadow);
+  --elevation-2: 0 2px 6px 2px var(--md-sys-color-shadow), 0 1px 2px 0 var(--md-sys-color-shadow);
+  --elevation-3: 0 4px 8px 3px var(--md-sys-color-shadow), 0 1px 3px 0 var(--md-sys-color-shadow);
+  --canvas-bg: #E8E5ED;
+}
+
+[data-theme="dark"] {
+  --md-sys-color-primary: #B9C3FF;
+  --md-sys-color-on-primary: #142578;
+  --md-sys-color-primary-container: #2F3E90;
+  --md-sys-color-on-primary-container: #DDE1FF;
+  --md-sys-color-secondary: #C3C5DD;
+  --md-sys-color-on-secondary: #2C2F42;
+  --md-sys-color-secondary-container: #434659;
+  --md-sys-color-surface: #131319;
+  --md-sys-color-surface-dim: #131319;
+  --md-sys-color-surface-container-lowest: #0E0E14;
+  --md-sys-color-surface-container-low: #1B1B22;
+  --md-sys-color-surface-container: #1F1F26;
+  --md-sys-color-surface-container-high: #2A2930;
+  --md-sys-color-surface-container-highest: #35343B;
+  --md-sys-color-on-surface: #E4E1E9;
+  --md-sys-color-on-surface-variant: #C7C5D0;
+  --md-sys-color-outline: #918F9A;
+  --md-sys-color-outline-variant: #46464F;
+  --md-sys-color-inverse-surface: #E4E1E9;
+  --md-sys-color-inverse-on-surface: #303037;
+  --md-sys-color-error: #FFB4AB;
+  --md-sys-color-shadow: rgba(0,0,0,0.35);
+  --md-sys-color-scrim: rgba(0,0,0,0.6);
+  --elevation-1: 0 1px 3px 1px var(--md-sys-color-shadow), 0 1px 2px 0 var(--md-sys-color-shadow);
+  --elevation-2: 0 2px 6px 2px var(--md-sys-color-shadow), 0 1px 2px 0 var(--md-sys-color-shadow);
+  --elevation-3: 0 4px 8px 3px var(--md-sys-color-shadow), 0 1px 3px 0 var(--md-sys-color-shadow);
+  --canvas-bg: #0E0E14;
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-family: var(--md-ref-typeface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  min-height: 100vh;
+  overflow: hidden;
+  transition: background var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard),
+              color var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard);
+}
+
+/* ═══════════════════════════════════════════
+   MATERIAL SYMBOLS
+   ═══════════════════════════════════════════ */
+.mi {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+/* ═══════════════════════════════════════════
+   TYPOGRAPHY
+   ═══════════════════════════════════════════ */
+.display-sm { font-size: 36px; font-weight: 400; line-height: 44px; letter-spacing: -0.25px; }
+.headline-md { font-size: 28px; font-weight: 400; line-height: 36px; }
+.title-lg { font-size: 22px; font-weight: 500; line-height: 28px; }
+.title-md { font-size: 16px; font-weight: 500; line-height: 24px; letter-spacing: 0.15px; }
+.label-lg { font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: 0.1px; }
+.label-md { font-size: 12px; font-weight: 500; line-height: 16px; letter-spacing: 0.5px; }
+.body-lg { font-size: 16px; font-weight: 400; line-height: 24px; letter-spacing: 0.5px; }
+.body-md { font-size: 14px; font-weight: 400; line-height: 20px; letter-spacing: 0.25px; }
+.body-sm { font-size: 12px; font-weight: 400; line-height: 16px; letter-spacing: 0.4px; }
+
+/* ═══════════════════════════════════════════
+   SCREENS
+   ═══════════════════════════════════════════ */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.97);
+}
+.screen.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: scale(1);
+}
+
+/* ═══════════════════════════════════════════
+   UPLOAD SCREEN
+   ═══════════════════════════════════════════ */
+#upload-screen {
+  align-items: center;
+  justify-content: center;
+  background: var(--md-sys-color-surface);
+}
+
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  max-width: 560px;
+  width: 90%;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-icon {
+  width: 52px;
+  height: 52px;
+  background: var(--md-sys-color-primary);
+  border-radius: var(--md-sys-shape-corner-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--md-sys-color-on-primary);
+}
+.brand-icon .mi { font-size: 28px; }
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+.brand-text h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  line-height: 1.2;
+}
+.brand-text span {
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface-variant);
+  letter-spacing: 0.3px;
+}
+
+.drop-zone {
+  width: 100%;
+  padding: 56px 40px;
+  border: 2px dashed var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-xl);
+  background: var(--md-sys-color-surface-container-low);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+  position: relative;
+  overflow: hidden;
+}
+.drop-zone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--md-sys-color-primary);
+  opacity: 0;
+  transition: opacity var(--md-sys-motion-duration-short) ease;
+}
+.drop-zone:hover::before { opacity: 0.04; }
+.drop-zone:hover {
+  border-color: var(--md-sys-color-primary);
+  background: var(--md-sys-color-surface-container);
+}
+.drop-zone.drag-over {
+  border-color: var(--md-sys-color-primary);
+  background: var(--md-sys-color-primary-container);
+  transform: scale(1.01);
+}
+.drop-zone.drag-over::before { opacity: 0; }
+
+.drop-zone .mi {
+  font-size: 48px;
+  color: var(--md-sys-color-primary);
+  position: relative;
+  z-index: 1;
+}
+.drop-zone p {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+.drop-zone .drop-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 4px;
+}
+.drop-zone .drop-sub {
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.drop-zone .browse-link {
+  color: var(--md-sys-color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.upload-footer {
+  font-size: 12px;
+  color: var(--md-sys-color-outline);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.theme-toggle-float {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+}
+
+/* ═══════════════════════════════════════════
+   EDITOR SCREEN
+   ═══════════════════════════════════════════ */
+#editor-screen {
+  flex-direction: column;
+}
+
+/* Top App Bar */
+.top-bar {
+  height: 64px;
+  background: var(--md-sys-color-surface-container);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 8px;
+  flex-shrink: 0;
+  z-index: 50;
+  transition: background var(--md-sys-motion-duration-medium) ease;
+}
+.top-bar .brand-mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: auto;
+}
+.top-bar .brand-mini-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--md-sys-color-primary);
+  border-radius: var(--md-sys-shape-corner-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--md-sys-color-on-primary);
+}
+.top-bar .brand-mini-icon .mi { font-size: 20px; }
+.top-bar .brand-mini h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+}
+.top-bar .file-name {
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface-variant);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-left: 8px;
+  padding-left: 12px;
+  border-left: 1px solid var(--md-sys-color-outline-variant);
+}
+
+/* Icon Buttons */
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  border-radius: var(--md-sys-shape-corner-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  transition: background var(--md-sys-motion-duration-short) ease;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.icon-btn:hover { background: var(--md-sys-color-on-surface); background: rgba(128,128,160,0.12); }
+.icon-btn:active { background: rgba(128,128,160,0.2); }
+.icon-btn .mi { font-size: 22px; }
+
+/* Main Layout */
+.editor-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  background: var(--md-sys-color-surface-container-low);
+  border-right: 1px solid var(--md-sys-color-outline-variant);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: background var(--md-sys-motion-duration-medium) ease;
+}
+.sidebar-header {
+  padding: 16px 16px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sidebar-header h3 {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.sidebar-header span {
+  font-size: 12px;
+  color: var(--md-sys-color-outline);
+}
+.thumbnails {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.thumbnails::-webkit-scrollbar { width: 4px; }
+.thumbnails::-webkit-scrollbar-track { background: transparent; }
+.thumbnails::-webkit-scrollbar-thumb {
+  background: var(--md-sys-color-outline-variant);
+  border-radius: 4px;
+}
+
+.thumb-item {
+  border-radius: var(--md-sys-shape-corner-md);
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all var(--md-sys-motion-duration-short) ease;
+  position: relative;
+  flex-shrink: 0;
+}
+.thumb-item:hover { border-color: var(--md-sys-color-outline-variant); }
+.thumb-item.active {
+  border-color: var(--md-sys-color-primary);
+  box-shadow: 0 0 0 1px var(--md-sys-color-primary);
+}
+.thumb-item canvas {
+  width: 100%;
+  display: block;
+  background: white;
+}
+.thumb-label {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background: var(--md-sys-color-scrim);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: var(--md-sys-shape-corner-xs);
+}
+
+/* Preview Area */
+.preview-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--canvas-bg);
+  position: relative;
+  overflow: hidden;
+  transition: background var(--md-sys-motion-duration-medium) ease;
+}
+
+.preview-toolbar {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+.preview-toolbar .zoom-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  min-width: 48px;
+  text-align: center;
+}
+.preview-toolbar .divider {
+  width: 1px;
+  height: 24px;
+  background: var(--md-sys-color-outline-variant);
+  margin: 0 8px;
+}
+
+.preview-canvas-wrap {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.preview-canvas-wrap::-webkit-scrollbar { width: 8px; height: 8px; }
+.preview-canvas-wrap::-webkit-scrollbar-track { background: transparent; }
+.preview-canvas-wrap::-webkit-scrollbar-thumb {
+  background: var(--md-sys-color-outline-variant);
+  border-radius: 8px;
+}
+
+.preview-frame {
+  position: relative;
+  box-shadow: var(--elevation-3);
+  border-radius: var(--md-sys-shape-corner-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: white;
+}
+.preview-frame canvas {
+  display: block;
+}
+
+/* Page Nav */
+.page-nav {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--md-sys-color-surface-container-highest);
+  border-radius: var(--md-sys-shape-corner-full);
+  padding: 4px;
+  box-shadow: var(--elevation-2);
+}
+.page-nav .icon-btn { width: 36px; height: 36px; }
+.page-nav .page-info {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
+/* Toggle Preview (Before/After) */
+.toggle-preview {
+  position: absolute;
+  top: 56px;
+  right: 16px;
+  display: flex;
+  background: var(--md-sys-color-surface-container-highest);
+  border-radius: var(--md-sys-shape-corner-full);
+  padding: 4px;
+  box-shadow: var(--elevation-1);
+  z-index: 10;
+}
+.toggle-preview button {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  border-radius: var(--md-sys-shape-corner-full);
+  font-family: var(--md-ref-typeface);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  transition: all var(--md-sys-motion-duration-short) ease;
+  letter-spacing: 0.3px;
+}
+.toggle-preview button.active {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+/* ═══════════════════════════════════════════
+   CONTROL PANEL (Bottom)
+   ═══════════════════════════════════════════ */
+.control-panel {
+  background: var(--md-sys-color-surface-container);
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-shrink: 0;
+  transition: background var(--md-sys-motion-duration-medium) ease;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.control-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Color Input Group */
+.color-input-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.color-swatch-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--md-sys-shape-corner-md);
+  border: 2px solid var(--md-sys-color-outline-variant);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: border-color var(--md-sys-motion-duration-short) ease;
+}
+.color-swatch-btn:hover { border-color: var(--md-sys-color-primary); }
+.color-swatch-btn input[type="color"] {
+  position: absolute;
+  inset: -8px;
+  width: calc(100% + 16px);
+  height: calc(100% + 16px);
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.hex-input-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--md-sys-color-surface-container-highest);
+  border: 1.5px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-sm);
+  overflow: hidden;
+  transition: border-color var(--md-sys-motion-duration-short) ease;
+  height: 44px;
+}
+.hex-input-wrap:focus-within {
+  border-color: var(--md-sys-color-primary);
+  box-shadow: 0 0 0 1px var(--md-sys-color-primary);
+}
+.hex-prefix {
+  padding: 0 0 0 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface-variant);
+  user-select: none;
+}
+.hex-input {
+  width: 90px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  font-family: 'Inter', monospace;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  padding: 0 14px 0 4px;
+  outline: none;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.hex-input::placeholder { color: var(--md-sys-color-outline); letter-spacing: 1px; }
+
+/* Preset Colors */
+.color-presets {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.preset-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--md-sys-shape-corner-full);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--md-sys-motion-duration-short) ease;
+  position: relative;
+  flex-shrink: 0;
+}
+.preset-swatch:hover {
+  transform: scale(1.15);
+  box-shadow: var(--elevation-1);
+}
+.preset-swatch.active {
+  border-color: var(--md-sys-color-on-surface);
+  box-shadow: 0 0 0 2px var(--md-sys-color-surface), 0 0 0 4px var(--md-sys-color-on-surface);
+}
+
+/* Export Button */
+.export-area { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+
+.filled-btn {
+  height: 48px;
+  padding: 0 28px;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  border: none;
+  border-radius: var(--md-sys-shape-corner-full);
+  font-family: var(--md-ref-typeface);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--md-sys-motion-duration-short) ease;
+  box-shadow: var(--elevation-1);
+  white-space: nowrap;
+}
+.filled-btn:hover {
+  box-shadow: var(--elevation-2);
+  filter: brightness(1.08);
+}
+.filled-btn:active { transform: scale(0.97); }
+.filled-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.filled-btn .mi { font-size: 20px; }
+
+.outlined-btn {
+  height: 48px;
+  padding: 0 24px;
+  background: transparent;
+  color: var(--md-sys-color-primary);
+  border: 1.5px solid var(--md-sys-color-outline);
+  border-radius: var(--md-sys-shape-corner-full);
+  font-family: var(--md-ref-typeface);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--md-sys-motion-duration-short) ease;
+  white-space: nowrap;
+}
+.outlined-btn:hover {
+  background: rgba(128,128,160,0.08);
+  border-color: var(--md-sys-color-primary);
+}
+.outlined-btn .mi { font-size: 20px; }
+
+/* ═══════════════════════════════════════════
+   LOADING OVERLAY
+   ═══════════════════════════════════════════ */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--md-sys-color-scrim);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.loading-overlay.active { opacity: 1; pointer-events: all; }
+
+.loading-card {
+  background: var(--md-sys-color-surface-container-high);
+  border-radius: var(--md-sys-shape-corner-xl);
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  box-shadow: var(--elevation-3);
+}
+
+/* Spinner */
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--md-sys-color-surface-container-highest);
+  border-top-color: var(--md-sys-color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-card p {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+}
+.loading-card .sub {
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-top: -12px;
+}
+
+/* Progress bar */
+.progress-bar {
+  width: 240px;
+  height: 4px;
+  background: var(--md-sys-color-surface-container-highest);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--md-sys-color-primary);
+  border-radius: 4px;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* ═══════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════ */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.toast {
+  background: var(--md-sys-color-inverse-surface);
+  color: var(--md-sys-color-inverse-on-surface);
+  padding: 14px 24px;
+  border-radius: var(--md-sys-shape-corner-sm);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--elevation-3);
+  animation: toast-in 0.35s var(--md-sys-motion-easing-emphasized);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+.toast.error { background: var(--md-sys-color-error); color: white; }
+.toast .mi { font-size: 20px; }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ═══════════════════════════════════════════
+   EMPTY STATE (No PDF loaded in editor)
+   ═══════════════════════════════════════════ */
+.empty-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--md-sys-color-on-surface-variant);
+  height: 100%;
+}
+.empty-preview .mi { font-size: 64px; opacity: 0.3; }
+.empty-preview p { font-size: 14px; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .sidebar { width: 140px; }
+  .control-panel { padding: 12px 16px; gap: 16px; }
+  .color-presets { display: none; }
+  .top-bar .file-name { display: none; }
+}
+@media (max-width: 640px) {
+  .sidebar { display: none; }
+  .control-panel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .export-area { margin-left: 0; justify-content: stretch; }
+  .export-area button { flex: 1; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ THEME TOGGLE (floating) ═══ -->
+<div class="theme-toggle-float">
+  <button class="icon-btn" id="themeToggle" title="Toggle theme">
+    <span class="mi" id="themeIcon">dark_mode</span>
+  </button>
+</div>
+
+<!-- ═══ UPLOAD SCREEN ═══ -->
+<div class="screen active" id="upload-screen">
+  <div class="upload-container">
+    <div class="brand">
+      <div class="brand-icon"><span class="mi">palette</span></div>
+      <div class="brand-text">
+        <h1>PDF Recolor</h1>
+        <span>One color. One click. Done.</span>
+      </div>
+    </div>
+
+    <div class="drop-zone" id="dropZone">
+      <span class="mi">upload_file</span>
+      <p>
+        <span class="drop-title">Drop your PDF here</span><br>
+        <span class="drop-sub">or <span class="browse-link">browse files</span></span>
+      </p>
+    </div>
+
+    <p class="upload-footer">
+      Fully offline — your files never leave your device.<br>
+      Supports any PDF up to 100 pages.
+    </p>
+  </div>
+  <input type="file" id="fileInput" accept=".pdf,application/pdf" hidden>
+</div>
+
+<!-- ═══ EDITOR SCREEN ═══ -->
+<div class="screen hidden" id="editor-screen">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="brand-mini">
+      <div class="brand-mini-icon"><span class="mi">palette</span></div>
+      <h2>PDF Recolor</h2>
+    </div>
+    <span class="file-name" id="fileName"></span>
+    <button class="icon-btn" id="newFileBtn" title="Open new file">
+      <span class="mi">note_add</span>
+    </button>
+    <button class="icon-btn" id="editorThemeToggle" title="Toggle theme">
+      <span class="mi">dark_mode</span>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="editor-body">
+    <!-- Sidebar: Thumbnails -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h3>Pages</h3>
+        <span id="pageCount">0 pages</span>
+      </div>
+      <div class="thumbnails" id="thumbnails"></div>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview-area">
+      <div class="preview-toolbar">
+        <button class="icon-btn" id="zoomOut" title="Zoom out"><span class="mi">remove</span></button>
+        <span class="zoom-label" id="zoomLabel">100%</span>
+        <button class="icon-btn" id="zoomIn" title="Zoom in"><span class="mi">add</span></button>
+        <button class="icon-btn" id="zoomFit" title="Fit to screen"><span class="mi">fit_screen</span></button>
+        <div class="divider"></div>
+        <button class="icon-btn" id="toggleView" title="Toggle original/colored">
+          <span class="mi">compare</span>
+        </button>
+      </div>
+
+      <div class="toggle-preview" id="viewToggle">
+        <button class="active" data-view="colored">Recolored</button>
+        <button data-view="original">Original</button>
+      </div>
+
+      <div class="preview-canvas-wrap" id="previewWrap">
+        <div class="preview-frame" id="previewFrame">
+          <canvas id="previewCanvas"></canvas>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="icon-btn" id="prevPage"><span class="mi">chevron_left</span></button>
+        <span class="page-info" id="pageInfo">1 / 1</span>
+        <button class="icon-btn" id="nextPage"><span class="mi">chevron_right</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Control Panel -->
+  <div class="control-panel">
+    <div class="control-group">
+      <span class="control-label">Target Color</span>
+      <div class="color-input-group">
+        <div class="color-swatch-btn" id="swatchBtn" style="background:#1A73E8">
+          <input type="color" id="nativeColorPicker" value="#1A73E8">
+        </div>
+        <div class="hex-input-wrap">
+          <span class="hex-prefix">#</span>
+          <input type="text" class="hex-input" id="hexInput" value="1A73E8" maxlength="6" placeholder="000000" spellcheck="false">
+        </div>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <span class="control-label">Presets</span>
+      <div class="color-presets" id="colorPresets"></div>
+    </div>
+
+    <div class="export-area">
+      <button class="outlined-btn" id="newPdfBtn">
+        <span class="mi">upload_file</span> New PDF
+      </button>
+      <button class="filled-btn" id="exportBtn">
+        <span class="mi">download</span> Export PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LOADING OVERLAY ═══ -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-card">
+    <div class="spinner"></div>
+    <p id="loadingText">Loading PDF…</p>
+    <p class="sub" id="loadingSub"></p>
+    <div class="progress-bar">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOAST CONTAINER ═══ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script src="assets/pdf.min.js"></script>
+<script src="assets/pdf-lib.min.js"></script>
+<script>
+// ═══════════════════════════════════════════
+// APP STATE
+// ═══════════════════════════════════════════
+const state = {
+  pdfDoc: null,          // PDF.js document
+  totalPages: 0,
+  currentPage: 1,
+  zoom: 1.0,
+  targetColor: { r: 26, g: 115, b: 232 }, // #1A73E8
+  viewMode: 'colored',   // 'colored' or 'original'
+  // Caches
+  originalCanvases: {},  // page -> original canvas
+  coloredCanvases: {},   // page -> recolored canvas
+  fileName: ''
+};
+
+// ═══════════════════════════════════════════
+// PDF.JS SETUP
+// ═══════════════════════════════════════════
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'assets/pdf.worker.min.js';
+
+// ═══════════════════════════════════════════
+// PRESETS
+// ═══════════════════════════════════════════
+const PRESETS = [
+  { hex: '#1A73E8', name: 'Blue' },
+  { hex: '#0D47A1', name: 'Navy' },
+  { hex: '#E53935', name: 'Red' },
+  { hex: '#8E24AA', name: 'Purple' },
+  { hex: '#00897B', name: 'Teal' },
+  { hex: '#2E7D32', name: 'Green' },
+  { hex: '#F57C00', name: 'Orange' },
+  { hex: '#37474F', name: 'Charcoal' },
+  { hex: '#AD1457', name: 'Pink' },
+  { hex: '#000000', name: 'Black' },
+];
+
+// ═══════════════════════════════════════════
+// DOM REFS
+// ═══════════════════════════════════════════
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+const uploadScreen = $('#upload-screen');
+const editorScreen = $('#editor-screen');
+const dropZone = $('#dropZone');
+const fileInput = $('#fileInput');
+const thumbnailsEl = $('#thumbnails');
+const previewCanvas = $('#previewCanvas');
+const previewFrame = $('#previewFrame');
+const hexInput = $('#hexInput');
+const nativeColorPicker = $('#nativeColorPicker');
+const swatchBtn = $('#swatchBtn');
+const presetsEl = $('#colorPresets');
+const loadingOverlay = $('#loadingOverlay');
+const loadingText = $('#loadingText');
+const loadingSub = $('#loadingSub');
+const progressFill = $('#progressFill');
+
+// ═══════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════
+function initTheme() {
+  const saved = localStorage.getItem('pdf-recolor-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  updateThemeIcons(saved);
+}
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('pdf-recolor-theme', next);
+  updateThemeIcons(next);
+}
+function updateThemeIcons(theme) {
+  const icon = theme === 'light' ? 'dark_mode' : 'light_mode';
+  $('#themeIcon').textContent = icon;
+  $('#editorThemeToggle .mi').textContent = icon;
+}
+$('#themeToggle').addEventListener('click', toggleTheme);
+$('#editorThemeToggle').addEventListener('click', toggleTheme);
+initTheme();
+
+// ═══════════════════════════════════════════
+// FILE UPLOAD
+// ═══════════════════════════════════════════
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type === 'application/pdf') loadPDF(file);
+  else showToast('Please drop a valid PDF file', 'error');
+});
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files[0]) loadPDF(e.target.files[0]);
+});
+
+// ═══════════════════════════════════════════
+// LOAD PDF
+// ═══════════════════════════════════════════
+async function loadPDF(file) {
+  showLoading('Loading PDF…', 'Parsing document');
+  state.fileName = file.name;
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const uint8 = new Uint8Array(arrayBuffer);
+    state.pdfDoc = await pdfjsLib.getDocument({ data: uint8 }).promise;
+    state.totalPages = state.pdfDoc.numPages;
+    state.currentPage = 1;
+    state.originalCanvases = {};
+    state.coloredCanvases = {};
+
+    $('#fileName').textContent = file.name;
+    $('#pageCount').textContent = `${state.totalPages} page${state.totalPages > 1 ? 's' : ''}`;
+
+    // Render all thumbnails
+    await renderThumbnails();
+
+    // Switch to editor
+    switchScreen('editor');
+    await showPage(1);
+    hideLoading();
+    showToast('PDF loaded successfully');
+  } catch (err) {
+    hideLoading();
+    showToast('Failed to load PDF: ' + err.message, 'error');
+    console.error(err);
+  }
+}
+
+// ═══════════════════════════════════════════
+// RENDER THUMBNAILS
+// ═══════════════════════════════════════════
+async function renderThumbnails() {
+  thumbnailsEl.innerHTML = '';
+  const scale = 0.3;
+
+  for (let i = 1; i <= state.totalPages; i++) {
+    updateProgress(i, state.totalPages, 'Generating thumbnails…');
+    const page = await state.pdfDoc.getPage(i);
+    const viewport = page.getViewport({ scale });
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    const ctx = canvas.getContext('2d');
+    await page.render({ canvasContext: ctx, viewport }).promise;
+
+    // Store original
+    state.originalCanvases[i] = canvas;
+
+    // Create thumb element
+    const thumb = document.createElement('div');
+    thumb.className = 'thumb-item';
+    thumb.dataset.page = i;
+    thumb.appendChild(canvas.cloneNode(true));
+    // Copy canvas content
+    const thumbCtx = thumb.querySelector('canvas').getContext('2d');
+    thumbCtx.drawImage(canvas, 0, 0);
+
+    const label = document.createElement('span');
+    label.className = 'thumb-label';
+    label.textContent = i;
+    thumb.appendChild(label);
+
+    thumb.addEventListener('click', () => showPage(i));
+    thumbnailsEl.appendChild(thumb);
+  }
+}
+
+// ═══════════════════════════════════════════
+// SHOW PAGE
+// ═══════════════════════════════════════════
+async function showPage(pageNum) {
+  state.currentPage = pageNum;
+  updatePageInfo();
+  updateActiveThumbnail();
+
+  // Render full page if not cached
+  if (!state.originalCanvases[pageNum + '_full']) {
+    const scale = 2.0; // High-res for preview
+    const page = await state.pdfDoc.getPage(pageNum);
+    const viewport = page.getViewport({ scale });
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    const ctx = canvas.getContext('2d');
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    state.originalCanvases[pageNum + '_full'] = canvas;
+    // Invalidate colored cache
+    delete state.coloredCanvases[pageNum];
+  }
+
+  renderPreview();
+}
+
+function renderPreview() {
+  const pageNum = state.currentPage;
+  const original = state.originalCanvases[pageNum + '_full'];
+  if (!original) return;
+
+  let source;
+  if (state.viewMode === 'original') {
+    source = original;
+  } else {
+    // Generate or fetch colored version
+    if (!state.coloredCanvases[pageNum]) {
+      state.coloredCanvases[pageNum] = recolorCanvas(original, state.targetColor);
+    }
+    source = state.coloredCanvases[pageNum];
+  }
+
+  previewCanvas.width = source.width * state.zoom;
+  previewCanvas.height = source.height * state.zoom;
+  const ctx = previewCanvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.drawImage(source, 0, 0, previewCanvas.width, previewCanvas.height);
+}
+
+// ═══════════════════════════════════════════
+// RECOLOR ENGINE
+// ═══════════════════════════════════════════
+function recolorCanvas(sourceCanvas, color) {
+  const w = sourceCanvas.width;
+  const h = sourceCanvas.height;
+  const outCanvas = document.createElement('canvas');
+  outCanvas.width = w;
+  outCanvas.height = h;
+  const srcCtx = sourceCanvas.getContext('2d');
+  const outCtx = outCanvas.getContext('2d');
+
+  const imageData = srcCtx.getImageData(0, 0, w, h);
+  const data = imageData.data;
+  const { r: tr, g: tg, b: tb } = color;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    // Luminance (0 = dark, 1 = light)
+    const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    // Map: dark → target color, light → white
+    data[i]     = Math.round(tr * (1 - lum) + 255 * lum);
+    data[i + 1] = Math.round(tg * (1 - lum) + 255 * lum);
+    data[i + 2] = Math.round(tb * (1 - lum) + 255 * lum);
+    // Alpha stays the same
+  }
+
+  outCtx.putImageData(imageData, 0, 0);
+  return outCanvas;
+}
+
+function invalidateColorCache() {
+  state.coloredCanvases = {};
+}
+
+// ═══════════════════════════════════════════
+// COLOR CONTROLS
+// ═══════════════════════════════════════════
+function setColor(hex) {
+  hex = hex.replace('#', '').toUpperCase();
+  if (!/^[0-9A-F]{6}$/.test(hex)) return false;
+
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  state.targetColor = { r, g, b };
+  hexInput.value = hex;
+  nativeColorPicker.value = '#' + hex;
+  swatchBtn.style.background = '#' + hex;
+
+  // Update preset active states
+  $$('.preset-swatch').forEach(s => {
+    s.classList.toggle('active', s.dataset.hex.toUpperCase() === hex);
+  });
+
+  // Re-render
+  invalidateColorCache();
+  renderPreview();
+  return true;
+}
+
+hexInput.addEventListener('input', () => {
+  let val = hexInput.value.replace(/[^0-9a-fA-F]/g, '').substring(0, 6);
+  hexInput.value = val.toUpperCase();
+  if (val.length === 6) setColor(val);
+});
+hexInput.addEventListener('blur', () => {
+  let val = hexInput.value.padEnd(6, '0');
+  hexInput.value = val.toUpperCase();
+  setColor(val);
+});
+hexInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { hexInput.blur(); }
+});
+
+nativeColorPicker.addEventListener('input', (e) => {
+  setColor(e.target.value);
+});
+
+// ═══════════════════════════════════════════
+// PRESETS
+// ═══════════════════════════════════════════
+function buildPresets() {
+  presetsEl.innerHTML = '';
+  PRESETS.forEach(p => {
+    const swatch = document.createElement('div');
+    swatch.className = 'preset-swatch';
+    swatch.style.background = p.hex;
+    swatch.dataset.hex = p.hex;
+    swatch.title = p.name;
+    swatch.addEventListener('click', () => setColor(p.hex));
+    presetsEl.appendChild(swatch);
+  });
+}
+buildPresets();
+
+// Init default color
+setColor('1A73E8');
+
+// ═══════════════════════════════════════════
+// PAGE NAVIGATION
+// ═══════════════════════════════════════════
+$('#prevPage').addEventListener('click', () => {
+  if (state.currentPage > 1) showPage(state.currentPage - 1);
+});
+$('#nextPage').addEventListener('click', () => {
+  if (state.currentPage < state.totalPages) showPage(state.currentPage + 1);
+});
+
+function updatePageInfo() {
+  $('#pageInfo').textContent = `${state.currentPage} / ${state.totalPages}`;
+}
+
+function updateActiveThumbnail() {
+  $$('.thumb-item').forEach(t => {
+    t.classList.toggle('active', parseInt(t.dataset.page) === state.currentPage);
+  });
+  // Scroll active thumb into view
+  const active = thumbnailsEl.querySelector('.thumb-item.active');
+  if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ═══════════════════════════════════════════
+// ZOOM
+// ═══════════════════════════════════════════
+const ZOOM_LEVELS = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0];
+
+$('#zoomIn').addEventListener('click', () => {
+  const next = ZOOM_LEVELS.find(z => z > state.zoom + 0.01);
+  if (next) { state.zoom = next; updateZoom(); }
+});
+$('#zoomOut').addEventListener('click', () => {
+  const prev = [...ZOOM_LEVELS].reverse().find(z => z < state.zoom - 0.01);
+  if (prev) { state.zoom = prev; updateZoom(); }
+});
+$('#zoomFit').addEventListener('click', () => {
+  const wrap = $('#previewWrap');
+  const orig = state.originalCanvases[state.currentPage + '_full'];
+  if (!orig) return;
+  const scaleX = (wrap.clientWidth - 48) / orig.width;
+  const scaleY = (wrap.clientHeight - 48) / orig.height;
+  state.zoom = Math.min(scaleX, scaleY, 2.0);
+  state.zoom = Math.max(0.25, state.zoom);
+  updateZoom();
+});
+
+function updateZoom() {
+  $('#zoomLabel').textContent = Math.round(state.zoom * 100) + '%';
+  renderPreview();
+}
+
+// ═══════════════════════════════════════════
+// VIEW TOGGLE (Original / Colored)
+// ═══════════════════════════════════════════
+$$('#viewToggle button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $$('#viewToggle button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.viewMode = btn.dataset.view;
+    renderPreview();
+  });
+});
+
+$('#toggleView').addEventListener('click', () => {
+  const newMode = state.viewMode === 'colored' ? 'original' : 'colored';
+  state.viewMode = newMode;
+  $$('#viewToggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === newMode);
+  });
+  renderPreview();
+});
+
+// ═══════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════
+$('#exportBtn').addEventListener('click', exportPDF);
+
+async function exportPDF() {
+  if (!state.pdfDoc) return;
+  showLoading('Exporting PDF…', `Processing 0 / ${state.totalPages} pages`);
+  $('#exportBtn').disabled = true;
+
+  try {
+    const { PDFDocument } = PDFLib;
+    const newPdf = await PDFDocument.create();
+
+    for (let i = 1; i <= state.totalPages; i++) {
+      updateProgress(i, state.totalPages, 'Exporting PDF…');
+      loadingSub.textContent = `Processing ${i} / ${state.totalPages} pages`;
+
+      // Get or create colored canvas
+      if (!state.originalCanvases[i + '_full']) {
+        const page = await state.pdfDoc.getPage(i);
+        const viewport = page.getViewport({ scale: 2.0 });
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        state.originalCanvases[i + '_full'] = canvas;
+      }
+
+      const original = state.originalCanvases[i + '_full'];
+      const colored = recolorCanvas(original, state.targetColor);
+
+      // Convert to PNG
+      const pngDataUrl = colored.toDataURL('image/png');
+      const pngBytes = await fetch(pngDataUrl).then(r => r.arrayBuffer());
+      const pngImage = await newPdf.embedPng(pngBytes);
+
+      // Get original page dimensions (in PDF points, 72 dpi)
+      const pdfPage = await state.pdfDoc.getPage(i);
+      const pdfViewport = pdfPage.getViewport({ scale: 1.0 });
+      const pageW = pdfViewport.width;
+      const pageH = pdfViewport.height;
+
+      const page = newPdf.addPage([pageW, pageH]);
+      page.drawImage(pngImage, {
+        x: 0, y: 0,
+        width: pageW,
+        height: pageH,
+      });
+    }
+
+    const pdfBytes = await newPdf.save();
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const baseName = state.fileName.replace(/\.pdf$/i, '');
+    const colorHex = hexInput.value;
+    a.download = `${baseName}_recolored_${colorHex}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    hideLoading();
+    showToast('PDF exported successfully!');
+  } catch (err) {
+    hideLoading();
+    showToast('Export failed: ' + err.message, 'error');
+    console.error(err);
+  } finally {
+    $('#exportBtn').disabled = false;
+  }
+}
+
+// ═══════════════════════════════════════════
+// NEW FILE
+// ═══════════════════════════════════════════
+$('#newFileBtn').addEventListener('click', () => switchScreen('upload'));
+$('#newPdfBtn').addEventListener('click', () => switchScreen('upload'));
+
+function switchScreen(name) {
+  if (name === 'editor') {
+    uploadScreen.classList.remove('active');
+    uploadScreen.classList.add('hidden');
+    editorScreen.classList.remove('hidden');
+    editorScreen.classList.add('active');
+  } else {
+    editorScreen.classList.remove('active');
+    editorScreen.classList.add('hidden');
+    uploadScreen.classList.remove('hidden');
+    uploadScreen.classList.add('active');
+    fileInput.value = '';
+  }
+}
+
+// ═══════════════════════════════════════════
+// LOADING / PROGRESS
+// ═══════════════════════════════════════════
+function showLoading(text, sub) {
+  loadingText.textContent = text;
+  loadingSub.textContent = sub || '';
+  progressFill.style.width = '0%';
+  loadingOverlay.classList.add('active');
+}
+function hideLoading() {
+  loadingOverlay.classList.remove('active');
+}
+function updateProgress(current, total, text) {
+  const pct = Math.round((current / total) * 100);
+  progressFill.style.width = pct + '%';
+  if (text) loadingText.textContent = text;
+  loadingSub.textContent = `${current} / ${total}`;
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+function showToast(message, type = 'success') {
+  const container = $('#toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icon = type === 'error' ? 'error' : 'check_circle';
+  toast.innerHTML = `<span class="mi">${icon}</span> ${message}`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.transition = 'opacity 0.3s, transform 0.3s';
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(8px)';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+// ═══════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════
+document.addEventListener('keydown', (e) => {
+  if (editorScreen.classList.contains('hidden')) return;
+  if (e.target.tagName === 'INPUT') return;
+
+  if (e.key === 'ArrowLeft') { $('#prevPage').click(); e.preventDefault(); }
+  if (e.key === 'ArrowRight') { $('#nextPage').click(); e.preventDefault(); }
+  if (e.key === ' ') { $('#toggleView').click(); e.preventDefault(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') { exportPDF(); e.preventDefault(); }
+});
+</script>
+</body>
+</html>

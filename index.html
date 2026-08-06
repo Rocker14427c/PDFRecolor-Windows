@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Recolor</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ═══ UPLOAD SCREEN ═══ -->
+<div class="screen active" id="upload-screen">
+  <div class="upload-container">
+    <div class="brand-hero">
+      <div class="brand-badge">🎨</div>
+      <h1>PDF Recolor</h1>
+      <p>One color. One click. Done.</p>
+    </div>
+    
+    <div class="upload-zone" id="dropZone">
+      <div class="upload-icon">📄</div>
+      <div class="upload-text">
+        <strong>Drop PDF here</strong>
+        <span>or click to browse</span>
+      </div>
+    </div>
+    
+    <button class="browse-btn" id="browseBtn">
+      <span>📁</span> Choose PDF File
+    </button>
+    
+    <p class="upload-footer">
+      Supports any PDF up to 100 pages · Windows Desktop App
+    </p>
+  </div>
+</div>
+
+<!-- ═══ EDITOR SCREEN ═══ -->
+<div class="screen hidden" id="editor-screen">
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-mini">🎨 PDF Recolor</div>
+      <button class="icon-btn" id="newFileBtn" title="New file">
+        <span>↺</span>
+      </button>
+    </div>
+    
+    <div class="file-info">
+      <div class="file-name" id="fileName">No file loaded</div>
+      <div class="page-info" id="pageInfo">Pages: 0</div>
+    </div>
+    
+    <div class="control-section">
+      <label class="section-label">Target Color</label>
+      <div class="color-row">
+        <div class="color-swatch-btn" id="swatchBtn" style="background:#7c6bf0">
+          <input type="color" id="nativeColorPicker" value="#7c6bf0">
+        </div>
+        <div class="hex-input-wrap">
+          <span class="hex-prefix">#</span>
+          <input type="text" class="hex-input" id="hexInput" value="7C6BF0" maxlength="6" placeholder="HEX CODE" spellcheck="false">
+        </div>
+      </div>
+    </div>
+    
+    <div class="control-section">
+      <label class="section-label">Color Presets</label>
+      <div class="presets-grid" id="colorPresets"></div>
+    </div>
+    
+    <div class="control-section">
+      <label class="section-label">Page Navigation</label>
+      <div class="page-nav">
+        <button class="nav-btn" id="prevPage">‹ Previous</button>
+        <span class="page-indicator" id="pageIndicator">1 / 1</span>
+        <button class="nav-btn" id="nextPage">Next ›</button>
+      </div>
+    </div>
+    
+    <div class="sidebar-footer">
+      <button class="btn-primary export-btn" id="exportBtn">
+        <span>⬇</span> Export PDF
+      </button>
+      <div class="export-info" id="exportInfo"></div>
+    </div>
+  </div>
+  
+  <!-- Preview Area -->
+  <div class="main-content">
+    <div class="preview-area" id="previewArea">
+      <!-- Compare indicator -->
+      <div class="compare-indicator" id="compareIndicator">Showing: Original</div>
+      
+      <!-- Toolbar -->
+      <div class="preview-toolbar">
+        <div class="zoom-controls">
+          <button class="tool-btn" id="zoomOut" title="Zoom Out">−</button>
+          <span class="zoom-level" id="zoomLevel">100%</span>
+          <button class="tool-btn" id="zoomIn" title="Zoom In">+</button>
+          <button class="tool-btn" id="zoomFit" title="Fit to Window">⟲</button>
+        </div>
+        <div class="view-toggle">
+          <button class="view-btn active" id="viewColored" data-view="colored">🎨 Colored</button>
+          <button class="view-btn" id="viewOriginal" data-view="original">📄 Original</button>
+        </div>
+      </div>
+      
+      <!-- Preview Container -->
+      <div class="preview-wrap" id="previewWrap">
+        <div class="preview-frame" id="previewFrame">
+          <canvas id="previewCanvas"></canvas>
+        </div>
+      </div>
+      
+      <!-- Page Thumbnails Strip -->
+      <div class="thumbnails-strip" id="thumbnailsStrip"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LOADING MODAL ═══ -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-card">
+    <div class="spinner"></div>
+    <p id="loadingText">Loading…</p>
+    <p class="sub" id="loadingSub"></p>
+    <div class="progress-bar">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOAST CONTAINER ═══ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- PDF.js libraries -->
+<script>pdfjsDistBuildPath = './assets/';</script>
+<script src="./assets/pdf.min.js"></script>
+<script src="./assets/pdf.worker.min.js"></script>
+<script src="./assets/pdf-lib.min.js"></script>
+<script src="renderer.js"></script>
+</body>
+</html>
