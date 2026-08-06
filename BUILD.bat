@@ -2,88 +2,121 @@
 title PDF Recolor Builder
 color 0A
 echo.
-echo  ██████╗  █████╗ ██████╗ 
-echo  ██╔══██╗██╔══██╗██╔══██╗
-echo  ██████╔╝███████║██████╔╝
-echo  ██╔══██╗██╔══██║██╔══██╗
-echo  ██████╔╝██║  ██║██║  ██║
-echo  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
-echo.
-echo  PDF Recolor - Builder
-echo  =========================
+echo  ╔═══════════════════════════════════════╗
+echo  ║      PDF RECOLOR BUILDER             ║
+echo  ╚═══════════════════════════════════════╝
 echo.
 
-:: Check if Python is installed
+:: Check admin rights
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [TIP] Running as Administrator is recommended
+    echo.
+)
+
+:: Check Python
 python --version >nul 2>&1
 if %errorlevel% neq 0 (
     echo [ERROR] Python is not installed!
     echo.
     echo Please install Python first:
-    echo 1. Go to https://python.org/downloads
-    echo 2. Download Python 3.8 or higher
-    echo 3. Run installer and CHECK "Add Python to PATH"
-    echo 4. Restart this script
+    echo 1. Go to: https://www.python.org/downloads
+    echo 2. Download Python 3.8 or newer
+    echo 3. IMPORTANT: Check "Add Python to PATH"
     echo.
     pause
     exit /b 1
 )
 
-echo [OK] Python found
+echo [OK] Python found:
 python --version
 
 :: Install dependencies
 echo.
-echo Installing dependencies...
-pip install pymupdf pillow pyinstaller -q
+echo Installing dependencies (only first time)...
+pip install pymupdf pillow pyinstaller --upgrade --quiet
 
 if %errorlevel% neq 0 (
     echo.
-    echo [ERROR] Failed to install dependencies
-    echo Try running as Administrator
+    echo [ERROR] Failed to install packages
+    echo.
+    echo Try these steps:
+    echo 1. Run this script as Administrator
+    echo 2. Check your internet connection
+    echo.
     pause
     exit /b 1
 )
 
 echo [OK] Dependencies installed
 
-:: Clean previous builds
+:: Clean old builds
 echo.
-echo Cleaning previous builds...
+echo Cleaning old builds...
 if exist "dist" rmdir /s /q dist
 if exist "build" rmdir /s /q build
-if exist "*.spec" del /q *.spec
+del /q *.spec 2>nul
 
-:: Build the EXE
+:: Build with better settings
 echo.
-echo Building EXE (this may take 1-2 minutes)...
+echo Building EXE...
+echo This takes 2-5 minutes. Please wait...
 echo.
-pyinstaller --onefile --windowed --name "PDFRecolor" --add-data "PDFRecolor.py;." PDFRecolor.py --noconfirm
+
+pyinstaller ^
+    --onefile ^
+    --windowed ^
+    --name "PDFRecolor" ^
+    --add-data "PDFRecolor.py;." ^
+    --hidden-import=tkinter ^
+    --hidden-import=PIL ^
+    --hidden-import=fitz ^
+    --collect-all=PIL ^
+    --collect-all=fitz ^
+    --noconfirm ^
+    --clean ^
+    PDFRecolor.py
 
 if %errorlevel% neq 0 (
     echo.
     echo [ERROR] Build failed!
+    echo.
+    echo Common fixes:
+    echo 1. Update pip: pip install --upgrade pip
+    echo 2. Run as Administrator
+    echo 3. Install Visual C++ Redistributable
+    echo.
     pause
     exit /b 1
 )
 
-:: Success!
+:: Check if EXE exists
+if not exist "dist\PDFRecolor.exe" (
+    echo.
+    echo [ERROR] EXE was not created!
+    echo.
+    pause
+    exit /b 1
+)
+
+:: Get file size
+for %%A in ("dist\PDFRecolor.exe") do set "SIZE=%%~zA"
+set /a MB=%SIZE:~0,-6%/1000
+
 echo.
 echo.
-echo  ╔════════════════════════════════════════╗
-echo  ║                                        ║
-echo  ║   BUILD SUCCESSFUL!                    ║
-echo  ║                                        ║
-echo  ╚════════════════════════════════════════╝
+echo  ╔══════════════════════════════════════════════════╗
+echo  ║                                                  ║
+echo  ║          BUILD SUCCESSFUL!                       ║
+echo  ║                                                  ║
+echo  ╚══════════════════════════════════════════════════╝
 echo.
-echo Your EXE is ready at:
+echo  Location: dist\PDFRecolor.exe
+echo  Size: ~%MB% MB
 echo.
-echo   dist\PDFRecolor.exe
-echo.
-echo Size: approximately 20-25 MB
-echo.
-echo Would you like to run it now? (Y/N)
-choice /c YN /n
-if %errorlevel%==1 start "" "dist\PDFRecolor.exe"
+
+set /p RUN="Would you like to run it now? (Y/N): "
+if /i "%RUN%"=="Y" start "" "dist\PDFRecolor.exe"
 
 echo.
 pause

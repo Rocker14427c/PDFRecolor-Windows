@@ -1,56 +1,105 @@
-# PDF Recolor - Build Instructions
+# PDF Recolor - Lightweight Windows App
 
-## Step 1: Install Python (if not already installed)
+<p align="center">
+  <img src="https://img.shields.io/badge/Size-~20MB-success?style=for-the-badge" alt="Size">
+  <img src="https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge" alt="Python">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
+</p>
 
-1. Go to https://www.python.org/downloads
-2. Download Python 3.8 or higher
-3. **IMPORTANT:** During installation, CHECK "Add Python to PATH"
-4. Complete the installation
-
-## Step 2: Build Your EXE
-
-### Method 1: Double-Click (Easiest)
-```
-Double-click BUILD.bat
-```
-
-### Method 2: Manual
-```bash
-# Open Command Prompt in this folder
-pip install pymupdf pillow pyinstaller
-pyinstaller --onefile --windowed --name "PDFRecolor" PDFRecolor.py
-```
-
-## Step 3: Use Your EXE
-
-Your executable will be created at:
-```
-dist\PDFRecolor.exe
-```
-
-Just double-click to run! No installation needed.
+> **Lightweight PDF recoloring tool - only ~20MB!**
 
 ---
 
-## Troubleshooting
+## 🚀 Build Your EXE
 
-### "Python not found"
-- Make sure you installed Python with "Add to PATH" checked
-- Try restarting your computer after installing Python
+### Build Scripts Available
 
-### "pip is not recognized"
-- Reinstall Python and check "Add Python to PATH"
-- Or use: py -m pip install pymupdf pillow
+| Script | When to Use |
+|:---|:---|
+| `BUILD.bat` | **Start here!** Most common build method |
+| `BUILD_VENV.bat` | If BUILD.bat fails - uses virtual environment |
+| `BUILD_ALT.bat` | Opens GUI builder (auto-py-to-exe) |
+| `DIAGNOSE.bat` | If EXE crashes - helps identify the problem |
 
-### Build fails
-- Try running Command Prompt as Administrator
-- Make sure you have stable internet connection
+### Step-by-Step
+
+```
+1. Double-click BUILD.bat
+2. Wait 2-5 minutes
+3. Get EXE in dist\PDFRecolor.exe
+```
 
 ---
 
-## Want a Pre-built EXE?
+## 🔧 Troubleshooting
 
-Unfortunately, I cannot provide a pre-built Windows EXE directly. 
-You need to build it once on your Windows PC (takes ~2 minutes).
+### EXE Crashes or Shows Error
 
-The source code is very small (18KB) and the build process is fully automated.
+Run `DIAGNOSE.bat` first! It will check:
+
+- [ ] Python is installed correctly
+- [ ] All packages are installed
+- [ ] Tkinter is available
+- [ ] Visual C++ Runtime is present
+
+### Common Fixes
+
+**1. Install Visual C++ Runtime:**
+```
+Download: https://aka.ms/vs/17/release/vc_redist.x64.exe
+```
+
+**2. If Tkinter Error:**
+```
+Reinstall Python and CHECK "tcl/tk and IDLE"
+```
+
+**3. If BUILD.bat Fails:**
+```
+Try BUILD_VENV.bat instead
+```
+
+**4. Using auto-py-to-exe (GUI):**
+```
+pip install auto-py-to-exe
+python -m auto_py_to_exe
+```
+
+---
+
+## 📋 Requirements
+
+- Windows 10/11 (64-bit)
+- Python 3.8+ (for building)
+- Internet connection (for first build)
+
+---
+
+## ✨ Features
+
+- 🎨 Color picker + 10 presets
+- 📄 Multi-page PDF support
+- 🔍 Zoom & thumbnails
+- 💾 Export to any location
+- 🌙 Dark theme UI
+
+---
+
+## 📁 Project Files
+
+```
+PDFRecolor-Windows/
+├── PDFRecolor.py      # Main application (18KB)
+├── BUILD.bat          # Main build script
+├── BUILD_VENV.bat     # Virtual env builder
+├── BUILD_ALT.bat      # GUI builder
+├── DIAGNOSE.bat       # Troubleshooting
+├── setup.py           # cx_Freeze config
+└── README.md
+```
+
+---
+
+## 📄 License
+
+MIT License - Free for personal and commercial use
